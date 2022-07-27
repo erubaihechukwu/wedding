@@ -1,0 +1,19 @@
+{% extends'admin/admin_panel.html' %}
+{% block contents%}
+<h2>
+	EDIT GIFTS
+</h2>
+<div class="my-2 row">
+	<div class="col">
+		<form action= "/admin/update" method= "post">
+
+			<div class= "mb-3">
+				<label class= "form-label">GiftName</label>
+				<input type= "text" name= "giftname" class= "form-control" value="{{deets.gift_name}}">
+				<input type="hidden" name="id" value="{{deets.gift_id}}">
+			</div>
+			<button class="btn btn-success">Add</button>
+		</form>
+	</div>
+</div>
+{%endblock%}

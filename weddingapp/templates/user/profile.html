@@ -1,0 +1,89 @@
+{% extends 'user/layout1.html'%}
+{% block title%} {{session['user']}} {% endblock %}
+
+{% block statement %}
+    <p class="display-4 color1">Welcome, {{session['user']}} </p>
+    <p class="lead color2">
+        We would like to hear from you. Please fill the form let us know your thoughts..
+    </p>
+    {% set msg = get_flashed_messages(with_categories=True)%}
+    {% if msg %}
+    {% for i in msg %}
+    {% if i[0] == 'error'%}
+    <p class="alert alert-danger">{{i[1]}}</p>
+    {% else %}
+    <p class="alert alert-success">{{i[1]}}</p>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    <div class="bg-dark col-7 p-3">
+        <a href="/user/edit" class="btn-link lead color1 d-block mb-3 px-3">edit profile</a>
+        <a href="/user/upload" class="btn-link lead color1 d-block mb-3 px-3">upload profile picture</a>
+        <a href="/#" class="btn-link lead color1 d-block mb-3 px-3">Send Enquiries</a>
+        <a href="/#" class="btn-link lead color1 d-block mb-3 px-3">Buy Aso Ebi</a>
+        <a href="/#" class="btn-link lead color1 d-block mb-3 px-3">log out</a>
+        <a href="/forum" class="btn-link lead color1 d-block mb-3 px-3">forum</a>
+        <a href="/accommodation" class="btn-link lead color1 d-block mb-3 px-3">accommodation</a>
+    </div>
+    <div class="d-flex btn-group">
+        <a href="/logout" class="btn btn-lg color3 d-inline-block" style="border:2px solid #BA68C8;">Log out</a>
+    </div>
+{% endblock %}
+
+{% block form %}
+<div class="p-3 mt-5">
+    {{ guest_deets }}
+    {% if guest_deets.guest_image !='' %}
+    <img src="{{ url_for('static',filename='uploads/'+guest_deets.guest_image)}}">
+    {% else %}
+    <a href="/user/upload">Click here to upload a picture</a>
+    {{selected}}
+    {% endif %}
+    <form id="paymentForm">
+  <div class="form-group">
+    <label for="email-address">Email Address</label>
+    <input type="email" id="email-address" required />
+  </div>
+  <div class="form-group">
+    <label for="amount">Amount</label>
+    <input type="tel" id="amount" required />
+  </div>
+  <div class="form-group">
+    <label for="first-name">First Name</label>
+    <input type="text" id="first-name" />
+  </div>
+  <div class="form-group">
+    <label for="last-name">Last Name</label>
+    <input type="text" id="last-name" />
+  </div>
+  <div class="form-submit">
+    <button type="submit" onclick="payWithPaystack()"> Pay </button>
+  </div>
+</form>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+    <script>
+       var paymentForm = document.getElementById('paymentForm');
+paymentForm.addEventListener('submit', payWithPaystack, false);
+function payWithPaystack() {
+  var handler = PaystackPop.setup({
+    key: 'pk_test_9cfcc42120aa284cf2a7b4b1f648a1ee7862417f', // Replace with your public key
+    email: document.getElementById('email-address').value,
+    amount: document.getElementById('amount').value * 100, // the amount value is multiplied by 100 to convert to the lowest currency unit
+    currency: 'NGN', // Use GHS for Ghana Cedis or USD for US Dollars
+    ref: 'YOUR_REFERENCE', // Replace with a reference you generated
+    callback: function(response) {
+      //this happens after the payment is completed successfully
+      var reference = response.reference;
+      alert('Payment complete! Reference: ' + reference);
+      // Make an AJAX call to your server with the reference to verify the transaction
+    },
+    onClose: function() {
+      alert('Transaction was not completed, window closed.');
+    },
+  });
+  handler.openIframe();
+}
+    </script>
+</div>
+{% endblock%}

@@ -1,0 +1,112 @@
+{% extends 'user/layout1.html'%}
+{% block title%} Login {% endblock %}
+
+{% block statement%}
+    <h1 class="display-3 color1">Mary & John's</h1>
+    <h1 class="display-4 color2 mb-3">Wedding invitation</h1>
+    <p class="lead color2">
+        We are delighted to announce that Mary & John are officially tying the knot!
+        Please login to see more details!
+    </p>
+    <h1 class="display-4 color1 my-3">Login form</h1>
+{% endblock %}
+
+
+{% block form %}
+    <div class="form forl-floating my-3 col-10">
+        <input type="text" name="username" class="form-control" id="username">
+    </div>
+    <div class="form forl-floating my-3 col-10">
+        <input type="password" name="password" class="form-control">
+    </div>
+    <div class="form forl-floating my-3 col-10">
+        <button>submit</button>
+    </div>
+    <p id="display" class="danger"></p>
+    <h2>Testing Method</h2>
+    <img id="profile" width="120px" src="{{url_for('static', filename='images/wedding2.jpg')}}">
+    <form id="myform" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{csrf_token()}}" id="csrf_token">
+        <input type="file" name="image">
+        <input type="text" name="firstname"><br>
+        <input type="text" name="lastname"><br>
+        <button id="btnserial" type="button">button</button>
+    </form>
+    <select name="mystate" id="mystate">
+        {% for i in s%}
+        <option value="{{i.state_id}}">{{i.state_name}}</option>
+        {%endfor%}
+    </select>
+    <select name="mylga" id="mylga">
+        <option value="">please select lga</option>
+    </select>
+{% endblock %}
+{%block custom_scripts%}
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#btnserial').click(function(){
+        //var data2send =$('#myform').serialize()
+        var form = document.getElementById('myform')
+        var data2send = new FormData(form)
+        data2send.append('missing',"i am not part of the actual form")
+        $.ajax({
+            url:"/ajaxtests/final",
+            data:data2send,
+            type:"post",
+            dataType:"json",
+
+            cache:false,
+            processData:false,
+            contentType:false,
+
+            success:function(rsp){
+                alert('something')
+                //console.log(rsp);
+                //alert(rsp.filename);
+                //alert(rsp['lastname']);
+                //alert(rsp.appended_data);
+                imglocation = '/static/images/'+rsp.filename
+                $('#profile').attr('src',imglocation)
+            },
+            error:function(error){console.log(error)}
+        })
+    })
+
+
+    $('#mystate').change(function(){
+        var state = $(this).val()
+        var datasent = {"stateid":state}
+        $.ajax({
+        url:"{{url_for('ajaxtexts_state')}}",
+        data:datasent,
+        type:"get",
+        dataType:"text",
+        success:function(rsp){
+            $('#mylga').html(rsp)
+        },
+        error:function(){}
+        })
+    })
+
+
+
+
+    $('#username').change(function(){
+    var data2send ={'username':$(this).val()}
+        $.ajax({
+            url:"/ajaxtests/checkusername",
+            data:"",
+            dataType:"text",
+            type:"get",
+            beforeSend:function(){},
+            success:function(rsp){
+                $('#display').html(rsp)
+            },
+            error:function(errormsg){
+                console.log(errormsg)
+            }
+        })
+    })
+})
+</script>
+{%endblock%}

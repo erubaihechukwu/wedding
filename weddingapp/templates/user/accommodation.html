@@ -1,0 +1,46 @@
+{% extends 'user/layout1.html'%}
+{% block title%} {{session['user']}} {% endblock %}
+
+{% block statement %}
+    <p class="display-4 color1">Welcome, {{session['user']}} </p>
+    <p class="lead color2">
+        We would like to hear from you. Please fill the form let us know your thoughts..
+    </p>
+    {% set msg = get_flashed_messages(with_categories=True)%}
+    {% if msg %}
+    {% for i in msg %}
+    {% if i[0] == 'error'%}
+    <p class="alert alert-danger">{{i[1]}}</p>
+    {% else %}
+    <p class="alert alert-success">{{i[1]}}</p>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    <div class="bg-dark col-7 p-3">
+        <a href="/user/edit" class="btn-link lead color1 d-block mb-3 px-3">edit profile</a>
+        <a href="/user/upload" class="btn-link lead color1 d-block mb-3 px-3">upload profile picture</a>
+        <a href="/#" class="btn-link lead color1 d-block mb-3 px-3">Send Enquiries</a>
+        <a href="/asoebi" class="btn-link lead color1 d-block mb-3 px-3">Buy Aso Ebi</a>
+        <a href="/#" class="btn-link lead color1 d-block mb-3 px-3">log out</a>
+        <a href="/registry" class="btn-link lead color1 d-block mb-3 px-3">gift registry</a>
+        <a href="/forum" class="btn-link lead color1 d-block mb-3 px-3">forum</a>
+    </div>
+    <div class="d-flex btn-group">
+        <a href="/logout" class="btn btn-lg color3 d-inline-block" style="border:2px solid #BA68C8;">Log out</a>
+    </div>
+{% endblock %}
+
+{% block form %}
+<h1>see the below for accomodations</h1>
+    <div class="row">
+        {% if rsp_json.get('status') == 1%}
+        {%for m in rsp_json['message']%}
+        <div class="col">
+            <img src="{{m['image']}}" class="img-fluid">
+            <h5>{{ m['contact'] }}</h5>
+        </div>
+        {%endfor%}
+        {%endif%}
+    </div>
+{{rsp_json}}
+{% endblock%}

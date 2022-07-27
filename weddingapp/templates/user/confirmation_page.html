@@ -1,0 +1,34 @@
+{% extends 'user/layout1.html'%}
+{% block title%} {{session['user']}} {% endblock %}
+
+{% block statement %}
+    <p class="display-4 color1">Welcome, {{session['user']}} </p>
+    <p class="lead color2">
+        We would like to hear from you. Please fill the for let us know your thoughts..
+    </p>
+<form method="post" action="{{ url_for('asoebi')}}">
+    <p>please select what to buy</p>
+    <table class="table">
+        <tr>
+            <th>serial</th>
+            <th>uniform</th>
+            <th>price</th>
+        </tr>
+        {% for order,details,uniform in deets%}
+        <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ uniform.uni_name }}</td>
+        <td>{{ details.det_itemprice }}</td>
+        </tr>
+        {%endfor%}
+        <tr>
+            <td>TOTAL</td>
+            <td colspan="2">{{total}}</td>
+        </tr>
+    </table>
+    <div class="d-flex btn-group">
+        <button class="btn btn-lg color3 d-inline-block" style="border:2px solid #a8c868;">PAY NOW</button>
+        <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+    </div>
+</form>
+{% endblock %}

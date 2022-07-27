@@ -1,0 +1,58 @@
+{% extends 'user/layout1.html'%}
+{% block title%} Login {% endblock %}
+
+{% block statement%}
+    <h1 class="display-3 color1">Mary & John's</h1>
+    <h1 class="display-4 color2 mb-3">Wedding invitation</h1>
+    <p class="lead color2">
+        We are delighted to announce that Mary & John are officially tying the knot!
+        Please login to see more details!
+    </p>
+    <h1 class="display-4 color1 my-3">Login form</h1>
+{% endblock %}
+
+
+{% block form %}
+    <label>share your toughts</label>
+    <textarea name="comment" id="comment"></textarea>
+    <input type="hidden" name="csrf_token" value="{{csrf_token()}}" id="csrf_token">
+    <p id="display"></p>
+    <button type="button" id="btn">click</button>
+{# url:"/send_forum?suggestion="+content, #}
+{% endblock %}
+{%block custom_scripts%}
+    <script type="text/javascript">
+        $(document).ready(function(){
+        $('#btn').click(function(){
+        var content= $('#comment').val()
+        var csrf = $('#csrf_token').val()
+        //data2send ="suggestion="+content+"&address="+"lagos"
+        data2send = {"suggestion":content, "csrf_token":csrf}
+        $.ajax({
+                url:"/send_forum",
+                data:data2send,
+                type:"post",
+                dataType:'text',
+                beforeSend:function(){
+                $("#btn").html("please wait.....")
+                //$("#loader").html("<img src="">")
+                if($("#comment").val()==''){
+                return false;
+                    }
+                },
+                success:function(rsp){
+                //alert(rsp)
+                $("#btn").html("click")
+                $("#loader").html("<img src="">")
+                $('#display').text(rsp)
+                $('#comment').val("")
+                    },
+                error:function(errormsg){
+                $("#btn").html("click")
+                console.log(errormsg)
+                    }
+        })
+        })
+        })
+    </script>
+{%endblock%}

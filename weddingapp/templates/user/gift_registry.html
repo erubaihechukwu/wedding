@@ -1,0 +1,24 @@
+{% extends 'user/layout1.html'%}
+{% block title%} {{session['user']}} {% endblock %}
+
+{% block statement %}
+    <p class="display-4 color1">Welcome, {{session['user']}} </p>
+    <p class="lead color2">
+        We would like to hear from you. Please fill the for let us know your thoughts..
+    </p>
+<form method="post" action="{{ url_for('submit_registory')}}">
+    <table class="table">
+        {% for i in gifts %}
+        <tr>
+        <td>{{ loop.index }}</td>
+        <td><input type="checkbox" name="selected_gift" value="{{ i.gift_id }}"></td>
+        <td>{{ i.gift_name }}</td>
+        </tr>
+        {%endfor%}
+    </table>
+    <div class="d-flex btn-group">
+        <button class="btn btn-lg color3 d-inline-block" style="border:2px solid #a8c868;">submit form</button>
+        <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+    </div>
+</form>
+{% endblock %}
